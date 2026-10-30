@@ -33,10 +33,10 @@ Do końca semestru dostarczamy działającą aplikację webową, w której miesz
 | Product Owner | … |
 | Scrum Master | … |
 | Interesariusz / klient (symulacja) | … |
-| Developers | …, … *(PO i SM też programują)* |
+| Developers | Krzysztof Szarek , … *(PO i SM też programują)* |
 
-Narzędzie Scrum: Trello / GitHub Projects *(do decyzji)*  
-Repozytorium: *(link)*
+Narzędzie Scrum: Trello  
+Repozytorium: https://github.com/Grendelek/Projekt_Zlozony_WSZiB_Grupa_DMKSO.git
 
 ## 5. MVP — Must have (cel: koniec Sprintu 3)
 
@@ -86,12 +86,3 @@ Uzasadnienie szczegółowe trafi do dokumentu architektury (ADR) w Sprincie 1.
 | W8 | Git, PR, review |
 | W9 | `docker compose up` + README |
 | W10 | `.env`, bcrypt/argon2 na hasła |
-
-## 9. Co powiemy prowadzącemu (2–3 min)
-
-
-1. **Problem:** usterki w akademiku giną w Messengerze i na kartkach.  t
-2. **Rozwiązanie:** jeden panel — mieszkaniec zgłasza, administracja domyka.  
-3. **MVP do S3:** konta z rolami, lokalizacje, pełny cykl życia zgłoszenia, Docker.  
-4. **Poza zakresem:** mobilka, USOS, płatności — żeby zakres był realny.  
-5. **Prośba:** prosimy o akceptację tematu i MVP w Sprincie 0.
