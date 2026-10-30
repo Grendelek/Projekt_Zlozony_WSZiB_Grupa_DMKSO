@@ -15,9 +15,8 @@ W akademiku usterki (prysznic, grzejnik, zamek, internet w pokoju, oświetlenie 
 
 ## 2. Użytkownicy
 
-| Rola w aplikacji | Kto to jest | Co może |
-|------------------|-------------|---------|
-| **Mieszkaniec** | Student z pokojem w akademiku | Zakłada zgłoszenie, śledzi status, uzupełnia opis / zdjęcie (opcjonalnie w S/C) |
+| Rola w aplikacji -----------| Kto to jest----------------------| Co może----------------------------------------------------------------------------- |
+| **Mieszkaniec**  -----------| Student z pokojem w akademiku ---| Zakłada zgłoszenie, śledzi status, uzupełnia opis / zdjęcie (opcjonalnie w S/C)----- |
 | **Administracja / technik** | Portier, admin domu, konserwator | Widzi kolejkę, zmienia status, przypisuje priorytet, zamyka zgłoszenie |
 
 
@@ -62,19 +61,4 @@ Repozytorium: https://github.com/Grendelek/Projekt_Zlozony_WSZiB_Grupa_DMKSO
 5. AI do klasyfikacji usterek  
 
 
-
-## 7. Mapowanie na W1–W10 (checklista)
-
-| Nr | Jak spełnimy |
-|----|----------------|
-| W1 | ≥ 3 UC: zgłoszenie usterki, obsługa statusów przez admina, przegląd/filtrowanie listy |
-| W2 | Encje: User, Location, Ticket (+ opcjonalnie Category / Comment) |
-| W3 | CRUD na Ticket |
-| W4 | Role mieszkaniec vs administracja |
-| W5 | UI web + walidacja |
-| W6 | Warstwy: UI / logika / dane |
-| W7 | Testy jednostkowe logiki statusów + 1 test integracyjny API/DB |
-| W8 | Git, PR, review |
-| W9 | `docker compose up` + README |
-| W10 | `.env`, bcrypt/argon2 na hasła |
 
