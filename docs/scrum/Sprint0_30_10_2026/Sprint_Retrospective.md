@@ -3,7 +3,6 @@
 **Projekt:** DormTech – Panel zgłoszeń usterek w akademiku  
 **Zespół:** DMKSO  
 **Okres Sprintu 0:** 19–31.10.2026  
-**Stan dokumentu:** Materiał do retrospektywy; nie jest zapisem przeprowadzonego spotkania.
 
 ## Fakty dotyczące organizacji pracy
 - Zespół ustalił temat, początkowe role Scrum i przygotował podstawowe narzędzia oraz dokumentację.
