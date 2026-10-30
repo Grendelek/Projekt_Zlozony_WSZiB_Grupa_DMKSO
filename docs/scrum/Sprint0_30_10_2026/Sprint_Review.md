@@ -22,6 +22,8 @@ Temat i materiały zostały przekazane prowadzącemu. **Na moment sporządzenia 
 
 Nie rozpoczęto implementacji aplikacji; Sprint 0 dotyczył organizacji projektu.
 
+Klient (AI) nie uczestniczy jeszcze na tym etapie.
+
 ## Otwarte kwestie
 - Uzyskanie odpowiedzi prowadzącego i uwzględnienie ewentualnych uwag.
 - Uzgodnienie zakresu i przypisanie konkretnych zadań na kolejny sprint.
