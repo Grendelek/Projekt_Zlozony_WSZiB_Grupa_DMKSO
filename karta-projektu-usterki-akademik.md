@@ -89,7 +89,7 @@ Uzasadnienie szczegółowe trafi do dokumentu architektury (ADR) w Sprincie 1.
 
 ## 9. Co powiemy prowadzącemu (2–3 min)
 
-1. **Problem:** usterki w akademiku giną w Messengerze i na kartkach.  
+1. **Problem:** usterki w akademiku giną w Messengerze i na kartkach.  t
 2. **Rozwiązanie:** jeden panel — mieszkaniec zgłasza, administracja domyka.  
 3. **MVP do S3:** konta z rolami, lokalizacje, pełny cykl życia zgłoszenia, Docker.  
 4. **Poza zakresem:** mobilka, USOS, płatności — żeby zakres był realny.  
