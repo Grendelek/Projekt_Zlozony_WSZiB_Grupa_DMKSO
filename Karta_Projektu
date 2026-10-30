@@ -1,8 +1,8 @@
 # Karta projektu – Panel zgłoszeń usterek w akademiku
 
-**Nazwa robocza:** Nazwa / UsterkiAkademik  
-**Temat:** Aplikacja webowa do zgłaszania i obsługi usterek w konkretnym akademiku studenckim.  
-**Prosimy o akceptację tematu i zakresu MVP w Sprincie 0.**
+**Nazwa robocza:** DormTech
+**Temat:** Aplikacja webowa do zgłaszania i obsługi usterek w  akademiku studenckim.  
+
 
 ## 1. Problem
 
@@ -15,30 +15,29 @@ W akademiku usterki (prysznic, grzejnik, zamek, internet w pokoju, oświetlenie 
 
 ## 2. Użytkownicy
 
-| Rola w aplikacji | Kto to jest | Co może |
-|------------------|-------------|---------|
-| **Mieszkaniec** | Student z pokojem w akademiku | Zakłada zgłoszenie, śledzi status, uzupełnia opis / zdjęcie (opcjonalnie w S/C) |
+| Rola w aplikacji -----------| Kto to jest----------------------| Co może----------------------------------------------------------------------------- |
+| **Mieszkaniec**  -----------| Student z pokojem w akademiku ---| Zakłada zgłoszenie, śledzi status, uzupełnia opis / zdjęcie (opcjonalnie w S/C)----- |
 | **Administracja / technik** | Portier, admin domu, konserwator | Widzi kolejkę, zmienia status, przypisuje priorytet, zamyka zgłoszenie |
 
-*(Wymaganie W4: min. 2 role z różnymi uprawnieniami.)*
+
 
 ## 3. Wizja produktu
 
 Do końca semestru dostarczamy działającą aplikację webową, w której mieszkaniec w kilka minut zgłasza usterkę powiązaną z lokalizacją (pokój / piętro / część wspólna), a administracja prowadzi je w jednym panelu od „nowe” do „rozwiązane” — z historią w bazie i kontami testowymi do demonstracji.
 
-## 4. Zespół i role Scrum *(uzupełnić imionami)*
+## 4. Zespół i role Scrum(Rotacyjnie, będziemy robić zmiany co sprint lub 2 sprinty, adnotacje o rotacji pojawią się w tablicy scrum
 
 | Rola Scrum | Osoba |
 |------------|--------|
-| Product Owner | … |
-| Scrum Master | … |
-| Interesariusz / klient (symulacja) | … |
-| Developers | Krzysztof Szarek , … *(PO i SM też programują)* |
+| Product Owner | Kacper Kania |
+| Scrum Master | Piotr Majer |
+| Interesariusz / klient (symulacja) | LLM |
+| Developers | Kacper Kania, Piotr Majer, Krzysztof Szarek, Tomasz Owca, Igor Drożdż |
 
 Narzędzie Scrum: Trello  
-Repozytorium: https://github.com/Grendelek/Projekt_Zlozony_WSZiB_Grupa_DMKSO.git
+Repozytorium: https://github.com/Grendelek/Projekt_Zlozony_WSZiB_Grupa_DMKSO
 
-## 5. MVP — Must have (cel: koniec Sprintu 3)
+## 5. MVP  
 
 1. Rejestracja / logowanie; role **mieszkaniec** i **administracja**.
 2. Zarządzanie lokalizacjami (budynek/akademik → piętro → pokój / strefa wspólna) — min. dane seed.
@@ -61,28 +60,5 @@ Repozytorium: https://github.com/Grendelek/Projekt_Zlozony_WSZiB_Grupa_DMKSO.git
 4. Czat na żywo / push mobile  
 5. AI do klasyfikacji usterek  
 
-## 7. Stos technologiczny (propozycja)
 
-- **Frontend + API:** Next.js (TypeScript)  
-- **Baza:** PostgreSQL  
-- **Auth:** sesje / JWT + role w bazie  
-- **Uruchomienie:** Docker Compose (app + DB)  
-- **CI:** GitHub Actions (build + testy)  
-- **Demo online (opcjonalnie):** Railway / Render — nie wymagane do W9  
 
-Uzasadnienie szczegółowe trafi do dokumentu architektury (ADR) w Sprincie 1.
-
-## 8. Mapowanie na W1–W10 (checklista)
-
-| Nr | Jak spełnimy |
-|----|----------------|
-| W1 | ≥ 3 UC: zgłoszenie usterki, obsługa statusów przez admina, przegląd/filtrowanie listy |
-| W2 | Encje: User, Location, Ticket (+ opcjonalnie Category / Comment) |
-| W3 | CRUD na Ticket |
-| W4 | Role mieszkaniec vs administracja |
-| W5 | UI web + walidacja |
-| W6 | Warstwy: UI / logika / dane |
-| W7 | Testy jednostkowe logiki statusów + 1 test integracyjny API/DB |
-| W8 | Git, PR, review |
-| W9 | `docker compose up` + README |
-| W10 | `.env`, bcrypt/argon2 na hasła |
