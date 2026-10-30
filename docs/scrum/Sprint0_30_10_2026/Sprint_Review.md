@@ -3,7 +3,6 @@
 **Projekt:** DormTech – Panel zgłoszeń usterek w akademiku  
 **Zespół:** DMKSO  
 **Okres Sprintu 0:** 19–31.10.2026  
-**Stan dokumentu:** Podsumowanie wykonanych prac; nie jest potwierdzeniem przeprowadzenia formalnego spotkania Review.
 
 ## Cel Sprintu 0
 Przygotowanie organizacyjne projektu: ustalenie tematu, ról zespołu, zasad pracy oraz narzędzi i wstępnego backlogu.
