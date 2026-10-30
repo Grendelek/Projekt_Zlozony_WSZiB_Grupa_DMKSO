@@ -46,19 +46,6 @@ Repozytorium: https://github.com/Grendelek/Projekt_Zlozony_WSZiB_Grupa_DMKSO
 5. Lista i filtrowanie zgłoszeń (status, kategoria) + walidacja formularzy i czytelne błędy.
 6. Dane w bazie (≥ 3 powiązane encje), uruchomienie wg README / Docker, hasła hashowane.
 
- 6. Should / Could / Won’t (skrót)
-
-**Should (po MVP, jeśli starczy czasu):** komentarze przy zgłoszeniu, przypisanie technika, powiadomienie e-mail o zmianie statusu, załącznik zdjęcia.
-
-**Could:** dashboard statystyk (ile otwartych / średni czas zamknięcia), eksport CSV, ciemny motyw.
-
-**Won’t have this time (świadomie poza zakresem):**
-
-1. Aplikacja mobilna natywna  
-2. Płatności / kaucje za szkody  
-3. Integracja z systemem uczelni (USOS / SSO)  
-4. Czat na żywo / push mobile  
-5. AI do klasyfikacji usterek  
 
 
 
