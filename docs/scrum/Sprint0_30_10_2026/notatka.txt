@@ -1,0 +1,2 @@
+Na dzisiejszym spotkaniu omówione zostały pomysły na temat projektu. Wybrany został temat: "Panel zgłoszeń usterek w akademiku". Podzielono role między wszystkich uczestników.
+Utworzono repozytorium w github, tablice na trello (wstępny backlog i historyjki MoSCoW) i plan pierwszego sprintu. Na pierwszym sprincie dopracujemy MoSCoW, utworzymy dokument architektury i szkielet aplikacji.
