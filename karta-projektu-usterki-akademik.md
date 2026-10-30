@@ -1,6 +1,6 @@
 # Karta projektu – Panel zgłoszeń usterek w akademiku
 
-**Nazwa robocza:** FixDorm / UsterkiAkademik  
+**Nazwa robocza:** Nazwa / UsterkiAkademik  
 **Temat:** Aplikacja webowa do zgłaszania i obsługi usterek w konkretnym akademiku studenckim.  
 **Prosimy o akceptację tematu i zakresu MVP w Sprincie 0.**
 
