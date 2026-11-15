@@ -4,8 +4,8 @@ Temat projektu: Aplikacja webowa do zgłaszania i obsługi usterek w akademiku s
 
 Skład: 
 Igor Drożdż - 
-Piotr Majer - Piotrekxm
-Kacper Kania - Grendelek
-Krzysztof Szarek - krizdow
-Tomasz Owca - owcatomasz-max
+Piotr Majer - Piotrekxm \
+Kacper Kania - Grendelek \
+Krzysztof Szarek - krizdow \
+Tomasz Owca - owcatomasz-max \
 (Adnotacje dotyczące aktualnego stanu ról będą adnotowane w Trello)
