@@ -1,3 +1,4 @@
+
 # DormTech - analiza wymagań metodą MoSCoW
 
 **Zespół DMKSO**
@@ -113,7 +114,7 @@ Podział 60/20/20 dotyczy orientacyjnego **nakładu pracy** w kategoriach M/S/C.
 
 ## 6. Diagram przypadków użycia UML
 
-![Diagram przypadków użycia DormTech dla US-01–US-11](docs\scrum\Sprint1_13_11_2026\UseCaseDiagramDormTech.png)
+<img width="1052" height="806" alt="UseCaseDiagramDormTech" src="https://github.com/user-attachments/assets/cfd1ffec-4008-4789-86e8-c5904d4ddea2" />
 
 Diagram obejmuje wszystkie funkcjonalne Must Have. Kod diagramu znajduje się w pliku `docs\scrum\Sprint1_13_11_2026\UseCaseDiagramDormTech.png`.
 
