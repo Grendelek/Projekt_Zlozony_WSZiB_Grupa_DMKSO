@@ -1,3 +1,12 @@
 Sprint 1 (13.11–27.11.2026)
-Na Sprincie 1 przygotowaliśmy dokument analizy wymagań z priorytetami MoSCoW, diagram przypadków użycia UML i dokument architektury. 
-W trakcie realizacji jest szkielet aplikacji z CI.
+W Sprincie 0 wykonaliśmy wszystkie zaplanowane zadania. Wybraliśmy temat projektu DormTech, utworzyliśmy repozytorium i założyliśmy tablicę w Trello. Prace zakończyliśmy w terminie i bez problemów.
+
+Celem Sprintu 1 jest przygotowanie dokumentu analizy wymagań oraz działającego szkieletu aplikacji (walking skeleton). Ustaliliśmy następujący podział prac:
+
+Krzysztof przygotuje dokument analizy wymagań.
+
+Igor przygotuje dokument dokument architektury.
+
+Piotr i Kacper poprowadzą prace nad stworzeniem działającego szkieletu aplikacji, a wszyscy w grupie będą im pomagać w tym procesie.
+
+Zadania na Sprint 1 zostały rozdzielone i przypisane na tablicy Trello.
