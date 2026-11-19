@@ -2,7 +2,7 @@
 
 **Zespół DMKSO**
 
-**Wersja dokumentu:** 1.1
+**Wersja dokumentu:** 1.2
 
 **Baza wymagań:** `Analiza_Wymagan.md` (priorytety MoSCoW)
 
@@ -45,21 +45,29 @@ Wszystkie diagramy zamieszczone w dokumencie (zapisane w notacji Mermaid) odzwie
 Diagram przedstawia system **DormTech** w otoczeniu jego użytkowników oraz zewnętrznych zależności (opcjonalny serwer SMTP dla powiadomień *Should Have*).
 
 ```mermaid
-C4Context
-    title Diagram Kontekstu Systemu DormTech (C4 Level 1)
+flowchart TB
+    resident["<b>Mieszkaniec akademika</b><br/><i>[Person]</i><br/><br/>Zgłasza usterki w pokoju lub<br/>części wspólnej i śledzi postęp."]
+    admin["<b>Pracownik administracji</b><br/><i>[Person]</i><br/><br/>Zarządza wspólną kolejką, ustala<br/>priorytety, statusy i role."]
+    technician["<b>Technik / Konserwator</b><br/><i>[Person - Should Have]</i><br/><br/>Realizuje przypisane naprawy<br/>techniczne w akademiku."]
 
-    Person(resident, "Mieszkaniec akademika", "Zgłasza usterki w pokoju lub części wspólnej i śledzi postęp ich naprawy.")
-    Person(admin, "Pracownik administracji", "Zarządza wspólną kolejką zgłoszeń, ustala priorytety, zmienia statusy oraz zarządza rolami.")
-    Person_Ext(technician, "Technik / Konserwator [Should Have]", "Realizuje przypisane naprawy techniczne w akademiku.")
+    dormtech["<b>System DormTech</b><br/><i>[Software System]</i><br/><br/>Aplikacja webowa (Next.js) do centralnego<br/>zgłaszania, kategoryzowania i obsługi<br/>usterek w akademiku."]
 
-    System(dormtech, "System DormTech", "Aplikacja webowa (Next.js) do centralnego zgłaszania, kategoryzowania i obsługi usterek w akademiku.")
+    smtp["<b>Serwer Poczty (SMTP)</b><br/><i>[Software System - Should Have]</i><br/><br/>Zewnętrzny serwer pocztowy wysyłający<br/>powiadomienia o zmianie statusu (US-14)."]
 
-    System_Ext(smtp, "Serwer Poczty (SMTP) [Should Have]", "Zewnętrzny serwer pocztowy wysyłający powiadomienia e-mail o zmianie statusu zgłoszenia (US-14).")
+    resident -->|"Zgłasza usterki, edytuje/usuwa nowe,<br/>sprawdza statusy [HTTPS]"| dormtech
+    admin -->|"Przegląda kolejkę, filtruje, zmienia<br/>statusy/priorytety, nadaje role [HTTPS]"| dormtech
+    technician -->|"Przegląda przypisane zadania<br/>[US-13 / HTTPS]"| dormtech
+    dormtech -->|"Wysyła powiadomienia e-mail<br/>[US-14 / SMTP]"| smtp
 
-    Rel(resident, dormtech, "Zgłasza usterki, edytuje/usuwa nowe sprawy, sprawdza statusy", "HTTPS / Przeglądarka")
-    Rel(admin, dormtech, "Przegląda kolejkę, filtruje, zmienia statusy i priorytety, nadaje role", "HTTPS / Przeglądarka")
-    Rel(technician, dormtech, "Przegląda przypisane zadania [US-13]", "HTTPS / Przeglądarka")
-    Rel(dormtech, smtp, "Wysyła powiadomienia e-mail [US-14]", "SMTP / TLS")
+    classDef person fill:#08427b,stroke:#052e56,color:#ffffff
+    classDef personExt fill:#6c757d,stroke:#495057,color:#ffffff
+    classDef system fill:#1168bd,stroke:#0b4884,color:#ffffff
+    classDef systemExt fill:#868e96,stroke:#495057,color:#ffffff
+
+    class resident,admin person
+    class technician personExt
+    class dormtech system
+    class smtp systemExt
 ```
 
 ### 4.2. Poziom 2: Diagram Kontenerów (C4 Containers)
@@ -67,21 +75,30 @@ C4Context
 Diagram prezentuje architekturę uruchomieniową opartą o Docker Compose (bez zależności od Vercela) oraz logiczny podział wewnątrz kontenera aplikacji Next.js.
 
 ```mermaid
-C4Container
-    title Diagram Kontenerów Systemu DormTech (C4 Level 2)
+flowchart TB
+    user["<b>Użytkownik (Mieszkaniec / Admin)</b><br/><i>[Person]</i><br/><br/>Korzysta z systemu przez przeglądarkę<br/>internetową (widoki 360px / 1280px)."]
 
-    Person(user, "Użytkownik (Mieszkaniec / Administrator)", "Korzysta z systemu za pomocą przeglądarki internetowej (360px / 1280px).")
+    subgraph docker_env ["Środowisko Docker Compose (Lokalnie / Serwer)"]
+        nextjs["<b>Aplikacja Full-Stack (Next.js App Router)</b><br/><i>[Container: Node.js, Next.js, TypeScript, Tailwind, Auth.js]</i><br/><br/>Renderuje UI (RSC/Client Components), obsługuje sesje Auth.js,<br/>udostępnia REST Route Handlers (/api/*) i egzekwuje RBAC."]
+        db[("<b>Relacyjna Baza Danych</b><br/><i>[Container: PostgreSQL w Dockerze]</i><br/><br/>Przechowuje konta (hashe bcrypt), lokalizacje,<br/>zgłoszenia oraz historię zmian statusów.")]
+    end
 
-    System_Boundary(dormtech_boundary, "Środowisko Docker Compose (Lokalnie / Serwer)") {
-        Container(nextjs, "Aplikacja Full-Stack (Next.js App Router)", "Node.js, Next.js, TypeScript, Tailwind CSS, Auth.js", "Renderuje interfejs UI (RSC/Client Components), obsługuje sesje Auth.js, udostępnia REST Route Handlers (/api/*) oraz wykonuje logikę biznesową i RBAC.")
-        ContainerDb(db, "Relacyjna Baza Danych", "PostgreSQL (Docker)", "Przechowuje konta użytkowników (skróty haseł bcrypt), strukturę budynku, zgłoszenia oraz historię zmian statusów.")
-    }
+    smtp["<b>Serwer SMTP</b><br/><i>[External System - Should Have]</i><br/><br/>Opcjonalna usługa wysyłki e-mail."]
 
-    System_Ext(smtp, "Serwer SMTP [Should Have]", "Opcjonalna usługa wysyłki wiadomości e-mail.")
+    user -->|"Żądania stron i wywołania API z sesją Auth.js<br/>[HTTP / HTTPS]"| nextjs
+    nextjs -->|"Odczyt i zapis encji w transakcjach<br/>[TCP / Prisma ORM]"| db
+    nextjs -->|"Zleca wysyłkę powiadomień [US-14]<br/>[SMTP / TLS]"| smtp
 
-    Rel(user, nextjs, "Wysyła żądania stron oraz wywołuje API z ciasteczkiem sesyjnym Auth.js", "HTTP / HTTPS")
-    Rel(nextjs, db, "Odczytuje i zapisuje encje domenowe w transakcjach", "TCP / Prisma ORM (SQL)")
-    Rel(nextjs, smtp, "Zleca wysyłkę powiadomień [US-14]", "SMTP")
+    classDef person fill:#08427b,stroke:#052e56,color:#ffffff
+    classDef container fill:#438dd5,stroke:#2e6295,color:#ffffff
+    classDef database fill:#2b6cb0,stroke:#1a365d,color:#ffffff
+    classDef systemExt fill:#868e96,stroke:#495057,color:#ffffff
+
+    class user person
+    class nextjs container
+    class db database
+    class smtp systemExt
+    style docker_env fill:#1a202c,stroke:#4a5568,stroke-dasharray: 5 5,color:#e2e8f0
 ```
 
 ## 5. Model danych (ERD — Entity Relationship Diagram)
@@ -350,7 +367,7 @@ Endpointy zaimplementowane są jako **Next.js App Router Route Handlers** w kata
 
 Struktura repozytorium odwzorowuje bezpośrednio podział z diagramów C4, modelu ERD oraz listy endpointów Route Handlers:
 
-```text
+```
 dormtech/
 ├── .github/
 │   └── workflows/
