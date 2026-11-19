@@ -3,7 +3,7 @@ Projekt zaliczeniowy z zajęć Projekt Złożony
 Temat projektu: Aplikacja webowa do zgłaszania i obsługi usterek w akademiku studenckim
 
 Skład: 
-Igor Drożdż - 
+Igor Drożdż - xSm3w
 Piotr Majer - Piotrekxm \
 Kacper Kania - Grendelek \
 Krzysztof Szarek - krizdow \
