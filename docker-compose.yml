@@ -14,5 +14,13 @@ services:
       interval: 5s
       retries: 10
 
+  app:
+    build: ./dormtech
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   dbdata:
