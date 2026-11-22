@@ -9,3 +9,20 @@ Kacper Kania - Grendelek \
 Krzysztof Szarek - krizdow \
 Tomasz Owca - owcatomasz-max \
 (Adnotacje dotyczące aktualnego stanu ról będą adnotowane w Trello)
+
+
+## Uruchomienie (Docker)
+
+Wymagany Docker Desktop.
+
+```
+cp .env.example .env
+docker compose up --build
+```
+
+Aplikacja: http://localhost:3000
+
+Sama baza (np. do pracy z `npm run dev`): `docker compose up -d db`
+Sprawdzenie: `docker compose ps` (baza ze statusem `healthy`).
+Zatrzymanie: `docker compose down` - dane zostają w wolumenie `dbdata`.
+Usunięcie danych: `docker compose down -v`.

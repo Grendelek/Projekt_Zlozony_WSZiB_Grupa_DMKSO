@@ -2,3 +2,4 @@
 .idea/
 *.sln
 *.suo
+.env
