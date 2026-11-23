@@ -14,8 +14,10 @@ async function main() {
     create: {
       email: "admin@dormtech.pl",
       passwordHash: adminPasswordHash,
-      fullName: "Marek Kowalski (Administracja)",
-      role: "admin",
+      firstName: "Jan",
+      lastName: "Kowalski",
+      role: "ADMIN",
+      roomNumber: "Administracja 01",
     },
   });
 
@@ -25,93 +27,133 @@ async function main() {
     create: {
       email: "ola.nowak@dormtech.pl",
       passwordHash: residentPasswordHash,
-      fullName: "Ola Nowak",
-      role: "mieszkaniec",
+      firstName: "Aleksandra",
+      lastName: "Nowak",
+      role: "RESIDENT",
+      roomNumber: "214",
     },
   });
 
-  // 2. Lokalizacje (pokój + część wspólna zgodnie z US-04)
-  let room204 = await prisma.location.findFirst({
-    where: { building: "DS-1", floor: 2, roomNumber: "204" },
+  // 2. Przykładowe lokalizacje w akademiku
+  const locRoom214 = await prisma.location.upsert({
+    where: {
+      building_floor_roomOrArea: {
+        building: "DS Alfa",
+        floor: 2,
+        roomOrArea: "Pokój 214",
+      },
+    },
+    update: {},
+    create: {
+      building: "DS Alfa",
+      floor: 2,
+      roomOrArea: "Pokój 214",
+      description: "Pokój dwuosobowy z łazienką",
+    },
   });
 
-  if (!room204) {
-    room204 = await prisma.location.create({
-      data: {
-        building: "DS-1",
+  const locKitchen2 = await prisma.location.upsert({
+    where: {
+      building_floor_roomOrArea: {
+        building: "DS Alfa",
         floor: 2,
-        roomNumber: "204",
-        type: "pokoj",
+        roomOrArea: "Kuchnia wspólna 2P",
       },
-    });
-  }
-
-  let commonKitchen = await prisma.location.findFirst({
-    where: { building: "DS-1", floor: 2, commonArea: "Kuchnia wspólna 2P" },
+    },
+    update: {},
+    create: {
+      building: "DS Alfa",
+      floor: 2,
+      roomOrArea: "Kuchnia wspólna 2P",
+      description: "Kuchnia ogólna na 2. piętrze",
+    },
   });
 
-  if (!commonKitchen) {
-    commonKitchen = await prisma.location.create({
-      data: {
-        building: "DS-1",
-        floor: 2,
-        commonArea: "Kuchnia wspólna 2P",
-        type: "czesc_wspolna",
-      },
-    });
-  }
+  // 3. Przykładowe zgłoszenia usterek + historia statusów
+  const existingTickets = await prisma.ticket.count();
 
-  // 3. Przykładowe zgłoszenia
-  const existingTicketsCount = await prisma.ticket.count();
-
-  if (existingTicketsCount === 0) {
+  if (existingTickets === 0) {
     const ticket1 = await prisma.ticket.create({
       data: {
-        title: "Zapowietrzony grzejnik w pokoju 204",
-        description:
-          "Grzejnik pod oknem jest zimny mimo odkręcenia zaworu na maksimum.",
-        category: "ogrzewanie",
-        status: "nowe",
-        priority: "wysoki",
+        title: "Cieknący kran w łazience",
+        description: "Z baterii umywalkowej cały czas kapie zimna woda nawet po mocnym dokręceniu.",
+        category: "PLUMBING",
+        status: "IN_PROGRESS",
+        priority: "HIGH",
         reporterId: resident.id,
-        locationId: room204.id,
-      },
-    });
-
-    await prisma.ticketStatusHistory.create({
-      data: {
-        ticketId: ticket1.id,
-        oldStatus: null,
-        newStatus: "nowe",
-        changedById: resident.id,
-      },
-    });
-
-    const ticket2 = await prisma.ticket.create({
-      data: {
-        title: "Cieknący kran w kuchni na 2. piętrze",
-        description:
-          "Z baterii przy zlewie kapie woda nawet po mocnym dokręceniu.",
-        category: "hydraulika",
-        status: "w_trakcie",
-        priority: "sredni",
-        reporterId: resident.id,
-        locationId: commonKitchen.id,
+        assigneeId: admin.id,
+        locationId: locRoom214.id,
       },
     });
 
     await prisma.ticketStatusHistory.createMany({
       data: [
         {
-          ticketId: ticket2.id,
+          ticketId: ticket1.id,
           oldStatus: null,
-          newStatus: "nowe",
+          newStatus: "NEW",
+          comment: "Utworzono zgłoszenie przez mieszkańca.",
           changedById: resident.id,
         },
         {
-          ticketId: ticket2.id,
-          oldStatus: "nowe",
-          newStatus: "w_trakcie",
+          ticketId: ticket1.id,
+          oldStatus: "NEW",
+          newStatus: "IN_PROGRESS",
+          comment: "Zgłoszenie przyjęte, konserwator zamówił nową głowicę.",
+          changedById: admin.id,
+        },
+      ],
+    });
+
+    const ticket2 = await prisma.ticket.create({
+      data: {
+        title: "Brak połączenia z gniazdkiem Ethernet",
+        description: "Gniazdko sieciowe przy biurku nie wykrywa kabla po restarcie routera.",
+        category: "INTERNET",
+        status: "NEW",
+        priority: "MEDIUM",
+        reporterId: resident.id,
+        locationId: locRoom214.id,
+      },
+    });
+
+    await prisma.ticketStatusHistory.create({
+      data: {
+        ticketId: ticket2.id,
+        oldStatus: null,
+        newStatus: "NEW",
+        comment: "Utworzono zgłoszenie.",
+        changedById: resident.id,
+      },
+    });
+
+    const ticket3 = await prisma.ticket.create({
+      data: {
+        title: "Przepalona świetlówka nad zlewem",
+        description: "Lampa nad blatem w kuchni miga i nie zapala się w pełni.",
+        category: "ELECTRICAL",
+        status: "RESOLVED",
+        priority: "LOW",
+        reporterId: resident.id,
+        assigneeId: admin.id,
+        locationId: locKitchen2.id,
+      },
+    });
+
+    await prisma.ticketStatusHistory.createMany({
+      data: [
+        {
+          ticketId: ticket3.id,
+          oldStatus: null,
+          newStatus: "NEW",
+          comment: "Utworzono zgłoszenie.",
+          changedById: resident.id,
+        },
+        {
+          ticketId: ticket3.id,
+          oldStatus: "NEW",
+          newStatus: "RESOLVED",
+          comment: "Wymieniono świetlówkę LED na nową.",
           changedById: admin.id,
         },
       ],
@@ -125,8 +167,8 @@ async function main() {
 }
 
 main()
-  .catch((error) => {
-    console.error("Błąd podczas wykonywania seeda:", error);
+  .catch((e) => {
+    console.error("Błąd podczas wykonywania seeda:", e);
     process.exit(1);
   })
   .finally(async () => {

@@ -7,104 +7,105 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  mieszkaniec
-  admin
-}
-
-enum LocationType {
-  pokoj
-  czesc_wspolna
+enum Role {
+  RESIDENT
+  ADMIN
 }
 
 enum TicketCategory {
-  hydraulika
-  elektryka
-  ogrzewanie
-  meble_wyposazenie
-  internet
-  inne
+  PLUMBING
+  ELECTRICAL
+  INTERNET
+  FURNITURE
+  CLEANING
+  OTHER
 }
 
 enum TicketStatus {
-  nowe
-  w_trakcie
-  oczekuje
-  rozwiazane
-  odrzucone
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
 }
 
 enum TicketPriority {
-  niski
-  sredni
-  wysoki
-  krytyczny
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }
 
 model User {
-  id           String   @id @default(uuid()) @db.Uuid
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-  fullName     String   @map("full_name")
-  role         UserRole @default(mieszkaniec)
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  firstName     String   @map("first_name")
+  lastName      String   @map("last_name")
+  role          Role     @default(RESIDENT)
+  roomNumber    String?  @map("room_number")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  tickets       Ticket[]              @relation("ReportedTickets")
-  statusChanges TicketStatusHistory[] @relation("ChangedByUser")
+  reportedTickets Ticket[]              @relation("ReportedTickets")
+  assignedTickets Ticket[]              @relation("AssignedTickets")
+  statusChanges   TicketStatusHistory[]
 
   @@map("users")
 }
 
 model Location {
-  id         String       @id @default(uuid()) @db.Uuid
-  building   String
-  floor      Int
-  roomNumber String?      @map("room_number")
-  commonArea String?      @map("common_area")
-  type       LocationType
-  createdAt  DateTime     @default(now()) @map("created_at")
+  id          String   @id @default(cuid())
+  building    String
+  floor       Int
+  roomOrArea  String   @map("room_or_area")
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
 
   tickets Ticket[]
 
-  @@unique([building, floor, roomNumber, commonArea])
+  @@unique([building, floor, roomOrArea])
   @@map("locations")
 }
 
 model Ticket {
-  id          String         @id @default(uuid()) @db.Uuid
+  id          String         @id @default(cuid())
   title       String
   description String
-  category    TicketCategory
-  status      TicketStatus   @default(nowe)
-  priority    TicketPriority @default(sredni)
+  category    TicketCategory @default(OTHER)
+  status      TicketStatus   @default(NEW)
+  priority    TicketPriority @default(MEDIUM)
   createdAt   DateTime       @default(now()) @map("created_at")
   updatedAt   DateTime       @updatedAt @map("updated_at")
 
-  reporterId String   @map("reporter_id") @db.Uuid
+  reporterId String   @map("reporter_id")
   reporter   User     @relation("ReportedTickets", fields: [reporterId], references: [id], onDelete: Restrict)
 
-  locationId String   @map("location_id") @db.Uuid
+  assigneeId String?  @map("assignee_id")
+  assignee   User?    @relation("AssignedTickets", fields: [assigneeId], references: [id], onDelete: SetNull)
+
+  locationId String   @map("location_id")
   location   Location @relation(fields: [locationId], references: [id], onDelete: Restrict)
 
-  statusHistory TicketStatusHistory[]
+  history TicketStatusHistory[]
 
-  @@index([status, category])
+  @@index([status])
   @@index([reporterId])
+  @@index([locationId])
   @@map("tickets")
 }
 
 model TicketStatusHistory {
-  id        String        @id @default(uuid()) @db.Uuid
+  id        String        @id @default(cuid())
   oldStatus TicketStatus? @map("old_status")
   newStatus TicketStatus  @map("new_status")
+  comment   String?
   changedAt DateTime      @default(now()) @map("changed_at")
 
-  ticketId String @map("ticket_id") @db.Uuid
-  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId    String @map("ticket_id")
+  ticket      Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 
-  changedById String @map("changed_by_id") @db.Uuid
-  changedBy   User   @relation("ChangedByUser", fields: [changedById], references: [id], onDelete: Restrict)
+  changedById String @map("changed_by_id")
+  changedBy   User   @relation(fields: [changedById], references: [id], onDelete: Restrict)
 
   @@index([ticketId])
   @@map("ticket_status_history")
