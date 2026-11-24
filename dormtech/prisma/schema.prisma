@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  RESIDENT
+  ADMIN
+}
+
+enum TicketCategory {
+  PLUMBING
+  ELECTRICAL
+  INTERNET
+  FURNITURE
+  CLEANING
+  OTHER
+}
+
+enum TicketStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  firstName     String   @map("first_name")
+  lastName      String   @map("last_name")
+  role          Role     @default(RESIDENT)
+  roomNumber    String?  @map("room_number")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  reportedTickets Ticket[]              @relation("ReportedTickets")
+  assignedTickets Ticket[]              @relation("AssignedTickets")
+  statusChanges   TicketStatusHistory[]
+
+  @@map("users")
+}
+
+model Location {
+  id          String   @id @default(cuid())
+  building    String
+  floor       Int
+  roomOrArea  String   @map("room_or_area")
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  tickets Ticket[]
+
+  @@unique([building, floor, roomOrArea])
+  @@map("locations")
+}
+
+model Ticket {
+  id          String         @id @default(cuid())
+  title       String
+  description String
+  category    TicketCategory @default(OTHER)
+  status      TicketStatus   @default(NEW)
+  priority    TicketPriority @default(MEDIUM)
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  reporterId String   @map("reporter_id")
+  reporter   User     @relation("ReportedTickets", fields: [reporterId], references: [id], onDelete: Restrict)
+
+  assigneeId String?  @map("assignee_id")
+  assignee   User?    @relation("AssignedTickets", fields: [assigneeId], references: [id], onDelete: SetNull)
+
+  locationId String   @map("location_id")
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Restrict)
+
+  history TicketStatusHistory[]
+
+  @@index([status])
+  @@index([reporterId])
+  @@index([locationId])
+  @@map("tickets")
+}
+
+model TicketStatusHistory {
+  id        String        @id @default(cuid())
+  oldStatus TicketStatus? @map("old_status")
+  newStatus TicketStatus  @map("new_status")
+  comment   String?
+  changedAt DateTime      @default(now()) @map("changed_at")
+
+  ticketId    String @map("ticket_id")
+  ticket      Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  changedById String @map("changed_by_id")
+  changedBy   User   @relation(fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@index([ticketId])
+  @@map("ticket_status_history")
+}
