@@ -2,27 +2,38 @@
 
 Projekt zaliczeniowy „Projekt Złożony”, zespół DMKSO.
 
+## Zespół DMKSO
+
+- Igor Drożdż — [xSm3w](https://github.com/xSm3w)
+- Piotr Majer — [Piotrekxm](https://github.com/Piotrekxm)
+- Kacper Kania — [Grendelek](https://github.com/Grendelek)
+- Krzysztof Szarek — [krizdow](https://github.com/krizdow)
+- Tomasz Owca — [owcatomasz-max](https://github.com/owcatomasz-max)
+
+Aktualny podział ról i postęp prac są dokumentowane w Trello.
+
 ## Lokalne uruchomienie w PowerShell (Docker tylko dla PostgreSQL)
 
 Wymagania: Node.js 22, Docker Desktop, PowerShell. Polecenia zaczynają się w katalogu głównym repozytorium.
 
 ```powershell
-Copy-Item .env.example .env
+if (!(Test-Path .env)) { Copy-Item .env.example .env }
 # Zmień POSTGRES_PASSWORD i DATABASE_URL w .env, ustaw własny AUTH_SECRET.
-Copy-Item .env dormtech/.env
-# Jeżeli lokalny PostgreSQL używa innego portu, zmień też DATABASE_URL.
+# PORT: jeśli w .env ustawiasz POSTGRES_PORT=55432, w DATABASE_URL użyj localhost:55432.
+if (!(Test-Path dormtech/.env)) { Copy-Item .env dormtech/.env }
+# Upewnij się, że DATABASE_URL w dormtech/.env używa portu dostępnego na komputerze.
 docker compose up -d db
 cd dormtech
 npm.cmd ci
 npm.cmd run db:generate
-npx prisma migrate dev --name align_schema
+npm.cmd run db:migrate:deploy
 npm.cmd run db:seed
 npm.cmd run dev
 ```
 
-Otwórz http://localhost:3000/login po wdrożeniu Auth.js. Do sprawdzenia statusu DB: `docker compose ps` w katalogu głównym.
+Otwórz http://localhost:3000. Po wdrożeniu Auth.js stroną logowania będzie `/login`. Do sprawdzenia statusu bazy: `docker compose ps` w katalogu głównym.
 
-**Uwaga:** stary `migration.sql` różni się od modelu Prisma. Nie nadpisuj go: wygeneruj nową migrację przyrostową i dołącz ją do PR. Jeśli wygenerowano ją już na innej gałęzi, zastosuj `prisma migrate deploy` zamiast ponownego generowania. Nie wykonuj `docker compose down -v` ani `prisma migrate reset` na bazie z ważnymi danymi.
+**Uwaga:** korekta struktury jest zapisana w migracji `20261124191256_align_schema`. Zwykle należy zastosować istniejące migracje przez `npm.cmd run db:migrate:deploy`, a nie generować je ponownie. Druga migracja może zakończyć się błędem lub spowodować utratę danych na starszej, niepustej bazie — przed jej uruchomieniem skonsultuj się z zespołem. Nie wykonuj `docker compose down -v` ani `prisma migrate reset` na bazie zawierającej ważne dane.
 
 ## Docker Compose – cała aplikacja
 
@@ -30,7 +41,7 @@ W katalogu głównym po ustawieniu `.env`:
 
 ```powershell
 docker compose up -d --build
-# Wykonuj dopiero po dodaniu poprawionej migracji przyrostowej do repo:
+# Po scaleniu migracji 20261124191256_align_schema do używanej gałęzi:
 docker compose exec app npx prisma migrate deploy
 docker compose exec app npx prisma db seed
 ```
