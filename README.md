@@ -1,46 +1,49 @@
-# Projekt_Zlozony_WSZiB_Grupa_DMKSO
+# DormTech – panel zgłoszeń usterek w akademiku
 
-Projekt zaliczeniowy z zajęć Projekt Złożony
-Temat projektu: Aplikacja webowa do zgłaszania i obsługi usterek w akademiku studenckim
+Projekt zaliczeniowy „Projekt Złożony”, zespół DMKSO.
 
-Skład:
-Igor Drożdż - xSm3w \
-Piotr Majer - Piotrekxm \
-Kacper Kania - Grendelek \
-Krzysztof Szarek - krizdow \
-Tomasz Owca - owcatomasz-max \
-(Adnotacje dotyczące aktualnego stanu ról będą adnotowane w Trello)
+## Lokalne uruchomienie w PowerShell (Docker tylko dla PostgreSQL)
 
-## Uruchomienie (Docker)
+Wymagania: Node.js 22, Docker Desktop, PowerShell. Polecenia zaczynają się w katalogu głównym repozytorium.
 
-Wymagany Docker Desktop.
-
-```
-cp .env.example .env
-docker compose up --build
-```
-
-Aplikacja: http://localhost:3000
-
-Sama baza (np. do pracy z `npm run dev`): `docker compose up -d db`
-Sprawdzenie: `docker compose ps` (baza ze statusem `healthy`).
-Zatrzymanie: `docker compose down` - dane zostają w wolumenie `dbdata`.
-Usunięcie danych: `docker compose down -v`.
-
-## Baza danych i konta testowe (Prisma)
-
-1. Skopiuj plik środowiskowy:
-   ```bash
-   cp .env.example .env
-   ```
-
-docker compose up -d
-
+```powershell
+Copy-Item .env.example .env
+# Zmień POSTGRES_PASSWORD i DATABASE_URL w .env, ustaw własny AUTH_SECRET.
+Copy-Item .env dormtech/.env
+# Jeżeli lokalny PostgreSQL używa innego portu, zmień też DATABASE_URL.
+docker compose up -d db
 cd dormtech
-npm run db:migrate:deploy
-npm run db:seed
+npm.cmd ci
+npm.cmd run db:generate
+npx prisma migrate dev --name align_schema
+npm.cmd run db:seed
+npm.cmd run dev
+```
 
-Konta testowe  
-Rola E-mail Hasło
-Administrator admin@dormtech.pl Admin123!
-Mieszkaniec ola.nowak@dormtech.pl Mieszkaniec123!
+Otwórz http://localhost:3000/login po wdrożeniu Auth.js. Do sprawdzenia statusu DB: `docker compose ps` w katalogu głównym.
+
+**Uwaga:** stary `migration.sql` różni się od modelu Prisma. Nie nadpisuj go: wygeneruj nową migrację przyrostową i dołącz ją do PR. Jeśli wygenerowano ją już na innej gałęzi, zastosuj `prisma migrate deploy` zamiast ponownego generowania. Nie wykonuj `docker compose down -v` ani `prisma migrate reset` na bazie z ważnymi danymi.
+
+## Docker Compose – cała aplikacja
+
+W katalogu głównym po ustawieniu `.env`:
+
+```powershell
+docker compose up -d --build
+# Wykonuj dopiero po dodaniu poprawionej migracji przyrostowej do repo:
+docker compose exec app npx prisma migrate deploy
+docker compose exec app npx prisma db seed
+```
+
+W kontenerze aplikacji `DATABASE_URL` wskazuje na hostname `db`, a przy uruchamianiu poleceń Prisma na Windowsie – na `localhost`.
+
+## Testowe konta (wyłącznie środowisko demonstracyjne)
+
+- Administrator: `admin@dormtech.pl`, hasło `Admin123!`
+- Mieszkaniec: `ola.nowak@dormtech.pl`, hasło `Mieszkaniec123!`
+
+Hasła są zapisywane w bazie jako skróty bcrypt. Nie używaj tych danych w produkcji.
+
+## Test jakości
+
+W `dormtech/`: `npm.cmd run lint`, `npm.cmd run build`, `npm.cmd audit` (wymaga sieci). Sam build nie dowodzi poprawności migracji.
