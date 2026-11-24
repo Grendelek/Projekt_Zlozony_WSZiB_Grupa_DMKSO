@@ -1,46 +1,60 @@
-# Projekt_Zlozony_WSZiB_Grupa_DMKSO
+# DormTech – panel zgłoszeń usterek w akademiku
 
-Projekt zaliczeniowy z zajęć Projekt Złożony
-Temat projektu: Aplikacja webowa do zgłaszania i obsługi usterek w akademiku studenckim
+Projekt zaliczeniowy „Projekt Złożony”, zespół DMKSO.
 
-Skład:
-Igor Drożdż - xSm3w \
-Piotr Majer - Piotrekxm \
-Kacper Kania - Grendelek \
-Krzysztof Szarek - krizdow \
-Tomasz Owca - owcatomasz-max \
-(Adnotacje dotyczące aktualnego stanu ról będą adnotowane w Trello)
+## Zespół DMKSO
 
-## Uruchomienie (Docker)
+- Igor Drożdż — [xSm3w](https://github.com/xSm3w)
+- Piotr Majer — [Piotrekxm](https://github.com/Piotrekxm)
+- Kacper Kania — [Grendelek](https://github.com/Grendelek)
+- Krzysztof Szarek — [krizdow](https://github.com/krizdow)
+- Tomasz Owca — [owcatomasz-max](https://github.com/owcatomasz-max)
 
-Wymagany Docker Desktop.
+Aktualny podział ról i postęp prac są dokumentowane w Trello.
 
-```
-cp .env.example .env
-docker compose up --build
-```
+## Lokalne uruchomienie w PowerShell (Docker tylko dla PostgreSQL)
 
-Aplikacja: http://localhost:3000
+Wymagania: Node.js 22, Docker Desktop, PowerShell. Polecenia zaczynają się w katalogu głównym repozytorium.
 
-Sama baza (np. do pracy z `npm run dev`): `docker compose up -d db`
-Sprawdzenie: `docker compose ps` (baza ze statusem `healthy`).
-Zatrzymanie: `docker compose down` - dane zostają w wolumenie `dbdata`.
-Usunięcie danych: `docker compose down -v`.
-
-## Baza danych i konta testowe (Prisma)
-
-1. Skopiuj plik środowiskowy:
-   ```bash
-   cp .env.example .env
-   ```
-
-docker compose up -d
-
+```powershell
+if (!(Test-Path .env)) { Copy-Item .env.example .env }
+# Zmień POSTGRES_PASSWORD i DATABASE_URL w .env, ustaw własny AUTH_SECRET.
+# PORT: jeśli w .env ustawiasz POSTGRES_PORT=55432, w DATABASE_URL użyj localhost:55432.
+if (!(Test-Path dormtech/.env)) { Copy-Item .env dormtech/.env }
+# Upewnij się, że DATABASE_URL w dormtech/.env używa portu dostępnego na komputerze.
+docker compose up -d db
 cd dormtech
-npm run db:migrate:deploy
-npm run db:seed
+npm.cmd ci
+npm.cmd run db:generate
+npm.cmd run db:migrate:deploy
+npm.cmd run db:seed
+npm.cmd run dev
+```
 
-Konta testowe  
-Rola E-mail Hasło
-Administrator admin@dormtech.pl Admin123!
-Mieszkaniec ola.nowak@dormtech.pl Mieszkaniec123!
+Otwórz http://localhost:3000. Po wdrożeniu Auth.js stroną logowania będzie `/login`. Do sprawdzenia statusu bazy: `docker compose ps` w katalogu głównym.
+
+**Uwaga:** korekta struktury jest zapisana w migracji `20261124191256_align_schema`. Zwykle należy zastosować istniejące migracje przez `npm.cmd run db:migrate:deploy`, a nie generować je ponownie. Druga migracja może zakończyć się błędem lub spowodować utratę danych na starszej, niepustej bazie — przed jej uruchomieniem skonsultuj się z zespołem. Nie wykonuj `docker compose down -v` ani `prisma migrate reset` na bazie zawierającej ważne dane.
+
+## Docker Compose – cała aplikacja
+
+W katalogu głównym po ustawieniu `.env`:
+
+```powershell
+docker compose up -d --build
+# Po scaleniu migracji 20261124191256_align_schema do używanej gałęzi:
+docker compose exec app npx prisma migrate deploy
+docker compose exec app npx prisma db seed
+```
+
+W kontenerze aplikacji `DATABASE_URL` wskazuje na hostname `db`, a przy uruchamianiu poleceń Prisma na Windowsie – na `localhost`.
+
+## Testowe konta (wyłącznie środowisko demonstracyjne)
+
+- Administrator: `admin@dormtech.pl`, hasło `Admin123!`
+- Mieszkaniec: `ola.nowak@dormtech.pl`, hasło `Mieszkaniec123!`
+
+Hasła są zapisywane w bazie jako skróty bcrypt. Nie używaj tych danych w produkcji.
+
+## Test jakości
+
+W `dormtech/`: `npm.cmd run lint`, `npm.cmd run build`, `npm.cmd audit` (wymaga sieci). Sam build nie dowodzi poprawności migracji.

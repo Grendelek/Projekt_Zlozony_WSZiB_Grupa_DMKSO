@@ -1,0 +1,27 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [Sandbox_branch]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dormtech
+    env:
+      # Validation and compilation do not need a running DB.
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/dormtech
+      AUTH_SECRET: ci-only-placeholder-not-real-secret-change-in-production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: dormtech/package-lock.json
+      - run: npm ci
+      - run: npx prisma validate
+      - run: npx prisma generate
+      - run: npm run lint
+      - run: npm run build
