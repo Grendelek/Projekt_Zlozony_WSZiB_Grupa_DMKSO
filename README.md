@@ -45,7 +45,7 @@ npm.cmd run db:seed
 npm.cmd run dev
 ```
 
-Otwórz http://localhost:3000. Po wdrożeniu Auth.js stroną logowania będzie `/login`. Do sprawdzenia statusu bazy: `docker compose ps` w katalogu głównym.
+Otwórz http://localhost:3000. Do sprawdzenia statusu bazy: `docker compose ps` w katalogu głównym.
 
 **Uwaga:** korekta struktury jest zapisana w migracji `20261124191256_align_schema`. Zwykle należy zastosować istniejące migracje przez `npm.cmd run db:migrate:deploy`, a nie generować je ponownie. Druga migracja może zakończyć się błędem lub spowodować utratę danych na starszej, niepustej bazie — przed jej uruchomieniem skonsultuj się z zespołem. Nie wykonuj `docker compose down -v` ani `prisma migrate reset` na bazie zawierającej ważne dane.
 
