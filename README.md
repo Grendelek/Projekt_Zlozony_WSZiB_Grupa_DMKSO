@@ -12,9 +12,23 @@ Projekt zaliczeniowy „Projekt Złożony”, zespół DMKSO.
 
 Aktualny podział ról i postęp prac są dokumentowane w Trello.
 
+## Skład repozytorium
+
+- `dormtech/` - aplikacja Next.js: strona startowa, logowanie Auth.js, panel, endpoint `/api/health`
+- `docs/` - dokumentacja projektu, kryteria akceptacji, Definition of Done
+- `docker-compose.yml` - baza PostgreSQL 16 i opcjonalnie cała aplikacja w kontenerze
+- `.env.example` - przykładowe zmienne, prawdziwy `.env` trzymamy poza Git
+
+## Dokumentacja
+
+- Dokumentacja projektu jest w folderze `docs/`
+- Definition of Done: `docs/Definition_of_Done.md`
+- Aktualny podział ról i postęp prac są w Trello
+
+
 ## Lokalne uruchomienie w PowerShell (Docker tylko dla PostgreSQL)
 
-Wymagania: Node.js 22, Docker Desktop, PowerShell. Polecenia zaczynają się w katalogu głównym repozytorium.
+Wymagania: Node.js 20.20.0 (LTS), Docker Desktop, PowerShell. Polecenia zaczynają się w katalogu głównym repozytorium.
 
 ```powershell
 if (!(Test-Path .env)) { Copy-Item .env.example .env }
@@ -31,7 +45,7 @@ npm.cmd run db:seed
 npm.cmd run dev
 ```
 
-Otwórz http://localhost:3000. Po wdrożeniu Auth.js stroną logowania będzie `/login`. Do sprawdzenia statusu bazy: `docker compose ps` w katalogu głównym.
+Otwórz http://localhost:3000. Do sprawdzenia statusu bazy: `docker compose ps` w katalogu głównym.
 
 **Uwaga:** korekta struktury jest zapisana w migracji `20261124191256_align_schema`. Zwykle należy zastosować istniejące migracje przez `npm.cmd run db:migrate:deploy`, a nie generować je ponownie. Druga migracja może zakończyć się błędem lub spowodować utratę danych na starszej, niepustej bazie — przed jej uruchomieniem skonsultuj się z zespołem. Nie wykonuj `docker compose down -v` ani `prisma migrate reset` na bazie zawierającej ważne dane.
 
